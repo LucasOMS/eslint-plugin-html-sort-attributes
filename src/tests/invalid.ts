@@ -234,7 +234,7 @@ export const invalid = [
         [dataSource]="supplierStructureDataSource"
         [columnTranslationKeys]="{
             'supplier.name': 'suppliers.home.table.name',
-            'supplier.address.zipCode': 'suppliers.home.table.zipCode',
+            'supplier.address.zipCode': 'suppliers.home.table.zipCode' + '\n',
             'supplier.address.city': 'suppliers.home.table.city',
             'contact.firstName': 'suppliers.home.table.contact',
             notes: 'suppliers.home.table.notes',
@@ -243,7 +243,7 @@ export const invalid = [
         `<app-global-sort
         [columnTranslationKeys]="{
             'supplier.name': 'suppliers.home.table.name',
-            'supplier.address.zipCode': 'suppliers.home.table.zipCode',
+            'supplier.address.zipCode': 'suppliers.home.table.zipCode' + '\n',
             'supplier.address.city': 'suppliers.home.table.city',
             'contact.firstName': 'suppliers.home.table.contact',
             notes: 'suppliers.home.table.notes',

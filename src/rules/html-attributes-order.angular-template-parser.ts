@@ -9,7 +9,6 @@ import { getOptions } from '../utils/get-options';
 import { alphabeticalErrorMessage, regexOrderErrorMessage } from '../utils/error-messages';
 import { getSourceCodeNewLineChar } from '../utils/get-source-code-new-line-char';
 import { getCharCountToLoc } from '../utils/get-char-count-to-loc';
-import { isSourceCodeUsingCRLF } from '../utils/is-source-code-using-crlf';
 import RuleContext = Rule.RuleContext;
 
 type AttributeMetadata = {
@@ -86,20 +85,20 @@ export function htmlAttributesOrderRuleForAngularTemplateParser(context: RuleCon
             const tagEndZeroBased = unifyLocation(elementOrTemplate.sourceSpan.end);
             const tagCode = getSourceCodeFromLocs(context, tagStartZeroBased, tagEndZeroBased);
 
-            const test = htmlParser.parseForESLint(tagCode);
-            const directChildrenTokens = test.ast.tokens;
+            const htmlParsed = htmlParser.parseForESLint(tagCode);
+            const directChildrenTokens = htmlParsed.ast.tokens;
             const tagEnd = directChildrenTokens.findIndex((token: any) => token.type === 'OpenTagEnd');
             const tokensInTagOpening = directChildrenTokens.slice(0, tagEnd);
             const attributesKeyValue = tokensInTagOpening.filter((token: any) => token.type === 'AttributeKey' || token.type === 'AttributeValue');
 
             const metadataByAttribute = new Map<any, AttributeMetadata>();
-            for (const attributeOrValue of attributesKeyValue) {
-                if (attributeOrValue.type === 'AttributeKey') {
-                    metadataByAttribute.set(attributeOrValue, { name: attributeOrValue.value, value: undefined });
+            for (const keyOrValueToken of attributesKeyValue) {
+                if (keyOrValueToken.type === 'AttributeKey') {
+                    metadataByAttribute.set(keyOrValueToken, { name: keyOrValueToken.value, value: undefined });
                 } else {
                     const previousAttribute = Array.from(metadataByAttribute.keys()).pop();
                     const metadata = metadataByAttribute.get(previousAttribute)!;
-                    metadataByAttribute.set(previousAttribute, { ...metadata, value: attributeOrValue.value });
+                    metadataByAttribute.set(previousAttribute, { ...metadata, value: keyOrValueToken.value });
                 }
             }
 
@@ -113,27 +112,12 @@ export function htmlAttributesOrderRuleForAngularTemplateParser(context: RuleCon
 
             const lastTokenIsValue = attributesKeyValue[attributesKeyValue.length - 1].type === 'AttributeValue';
 
-            let newLineInAttributesOffset = 0;
-            let firstLineOffset = 0;
-            if (isSourceCodeUsingCRLF(context)) {
-                newLineInAttributesOffset = attributesKeyValue[attributesKeyValue.length - 1].loc.end.line - attributesKeyValue[0].loc.start.line;
-
-                const tagOpen = directChildrenTokens.find((token: any) => token.type === 'OpenTagStart');
-                const isFirstAttributeOnNewLine = tagOpen.loc.start.line !== attributes[0].loc?.start.line;
-                if (isFirstAttributeOnNewLine) {
-                    firstLineOffset = 1;
-                }
-            }
-
             const offsetInFile = getCharCountToLoc(context, tagStartZeroBased);
 
             const rangeToReplace: [number, number] = [
                 offsetInFile
-                + attributesKeyValue[0].range[0]
-                + firstLineOffset,
+                + attributesKeyValue[0].range[0],
                 offsetInFile
-                + firstLineOffset
-                + newLineInAttributesOffset
                 + attributesKeyValue[attributesKeyValue.length - 1].range[1]
                 + (lastTokenIsValue ? 1 : 0), // If last token is value, we need to add 1 to the range to include the last quote
             ];

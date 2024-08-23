@@ -4,6 +4,7 @@ import { getOptions } from '../utils/get-options';
 import { isTagIgnored } from '../utils/is-tag-ignored';
 import { OrderRuleOptions } from '../types/order-rule-options';
 import { alphabeticalErrorMessage, regexOrderErrorMessage } from '../utils/error-messages';
+import { getSourceCodeNewLineChar } from '../utils/get-source-code-new-line-char';
 import Fix = Rule.Fix;
 import RuleFixer = Rule.RuleFixer;
 
@@ -42,7 +43,7 @@ function fixNode(context: Rule.RuleContext, rootNode: any, options: OrderRuleOpt
 
             return fixer.replaceTextRange(
                 range,
-                (firstAttributeWasOnNewLine ? '\n' : ' ') +
+                (firstAttributeWasOnNewLine ? getSourceCodeNewLineChar(context) : ' ') +
                 sortedAttributes
                     .map((a: any) => getCodeForAttribute(context, a))
 
@@ -58,7 +59,7 @@ function fixNode(context: Rule.RuleContext, rootNode: any, options: OrderRuleOpt
 
                         return secondAttributeLineStart + attributeCode;
                     })
-                    .join('\n'),
+                    .join(getSourceCodeNewLineChar(context)),
             );
         }
 

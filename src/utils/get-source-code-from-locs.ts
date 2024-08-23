@@ -1,4 +1,5 @@
 import { Rule } from 'eslint';
+import { getSourceCodeNewLineChar } from './get-source-code-new-line-char';
 
 type Loc = {
     line: number;
@@ -24,5 +25,5 @@ export function getSourceCodeFromLocs(
     const startLineText = lines[startLine].substring(start.column);
     const endLineText = lines[endLine].substring(0, end.column);
 
-    return [startLineText, ...lines.slice(startLine + 1, endLine), endLineText].join('\n');
+    return [startLineText, ...lines.slice(startLine + 1, endLine), endLineText].join(getSourceCodeNewLineChar(context));
 }
