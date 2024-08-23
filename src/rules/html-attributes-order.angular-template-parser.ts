@@ -1,13 +1,15 @@
 import { Rule } from 'eslint';
 import { isTagIgnored } from '../utils/is-tag-ignored';
-import { Location, sourceLocationFromLocation, unifyLocation } from '../utils/location.utils';
+import { sourceLocationFromLocation, unifyLocation } from '../utils/location.utils';
 import * as htmlParser from '@html-eslint/parser';
 import { getSourceCodeFromLocs } from '../utils/get-source-code-from-locs';
 import { getRegexOrder } from '../utils/get-regex-order';
 import { OrderRuleOptions } from '../types/order-rule-options';
 import { getOptions } from '../utils/get-options';
-import { getCharCountToLoc } from '../utils/get-char-count-to-loc';
 import { alphabeticalErrorMessage, regexOrderErrorMessage } from '../utils/error-messages';
+import { getSourceCodeNewLineChar } from '../utils/get-source-code-new-line-char';
+import { getCharCountToLoc } from '../utils/get-char-count-to-loc';
+import { isSourceCodeUsingCRLF } from '../utils/is-source-code-using-crlf';
 import RuleContext = Rule.RuleContext;
 
 type AttributeMetadata = {
@@ -18,8 +20,7 @@ type AttributeMetadata = {
 function getRearrangeAttributesFixer(
     context: Rule.RuleContext,
     attributesWithValue: Map<any, AttributeMetadata>,
-    rootStartZeroBased: Location,
-    attributesRange: [number, number],
+    rangeToReplace: [number, number],
     options: OrderRuleOptions): (fixer: Rule.RuleFixer) => Rule.Fix {
     return (fixer: Rule.RuleFixer): Rule.Fix => {
         const attributes = Array.from(attributesWithValue.keys());
@@ -42,7 +43,7 @@ function getRearrangeAttributesFixer(
             .map(attribute => {
                 const metadata = attributesWithValue.get(attribute)!;
                 if (metadata.value) {
-                    return `${metadata.name}="${metadata.value}"`;
+                    return `${ metadata.name }="${ metadata.value }"`;
                 }
                 return metadata.name;
             })
@@ -60,16 +61,9 @@ function getRearrangeAttributesFixer(
 
                 return ' '.repeat(mostLeftAttributeOffset) + attributeCode;
             })
-            .join(attributesAreOnMultipleLines ? '\n' : ' ');
+            .join(attributesAreOnMultipleLines ? getSourceCodeNewLineChar(context) : ' ');
 
-        const offset = getCharCountToLoc(context, rootStartZeroBased);
-
-        const range: [number, number] = [
-            attributesRange[0] + offset,
-            attributesRange[1] + offset,
-        ];
-
-        return fixer.replaceTextRange(range, code);
+        return fixer.replaceTextRange(rangeToReplace, code);
     };
 }
 
@@ -118,9 +112,29 @@ export function htmlAttributesOrderRuleForAngularTemplateParser(context: RuleCon
             const options: OrderRuleOptions = getOptions(context);
 
             const lastTokenIsValue = attributesKeyValue[attributesKeyValue.length - 1].type === 'AttributeValue';
-            const attributesRange: [number, number] = [
-                attributesKeyValue[0].range[0],
-                attributesKeyValue[attributesKeyValue.length - 1].range[1]
+
+            let newLineInAttributesOffset = 0;
+            let firstLineOffset = 0;
+            if (isSourceCodeUsingCRLF(context)) {
+                newLineInAttributesOffset = attributesKeyValue[attributesKeyValue.length - 1].loc.end.line - attributesKeyValue[0].loc.start.line;
+
+                const tagOpen = directChildrenTokens.find((token: any) => token.type === 'OpenTagStart');
+                const isFirstAttributeOnNewLine = tagOpen.loc.start.line !== attributes[0].loc?.start.line;
+                if (isFirstAttributeOnNewLine) {
+                    firstLineOffset = 1;
+                }
+            }
+
+            const offsetInFile = getCharCountToLoc(context, tagStartZeroBased);
+
+            const rangeToReplace: [number, number] = [
+                offsetInFile
+                + attributesKeyValue[0].range[0]
+                + firstLineOffset,
+                offsetInFile
+                + firstLineOffset
+                + newLineInAttributesOffset
+                + attributesKeyValue[attributesKeyValue.length - 1].range[1]
                 + (lastTokenIsValue ? 1 : 0), // If last token is value, we need to add 1 to the range to include the last quote
             ];
 
@@ -143,10 +157,10 @@ export function htmlAttributesOrderRuleForAngularTemplateParser(context: RuleCon
                         fix: getRearrangeAttributesFixer(
                             context,
                             metadataByAttribute,
-                            tagStartZeroBased,
-                            attributesRange,
+                            rangeToReplace,
                             options,
                         ),
+                        // FIXME Seems to give wrong position when using CRLF files
                         loc: sourceLocationFromLocation(
                             tagStartZeroBased,
                             attribute.loc,
@@ -166,10 +180,10 @@ export function htmlAttributesOrderRuleForAngularTemplateParser(context: RuleCon
                             fix: getRearrangeAttributesFixer(
                                 context,
                                 metadataByAttribute,
-                                tagStartZeroBased,
-                                attributesRange,
+                                rangeToReplace,
                                 options,
                             ),
+                            // FIXME Seems to give wrong position when using CRLF files
                             loc: sourceLocationFromLocation(
                                 tagStartZeroBased,
                                 attribute.loc,
