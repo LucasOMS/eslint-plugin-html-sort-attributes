@@ -1,5 +1,6 @@
 import { Rule } from 'eslint';
 import { getSourceCodeNewLineChar } from './get-source-code-new-line-char';
+import { isSourceCodeUsingCR } from './is-source-code-using-cr';
 
 type Loc = {
     line: number;
@@ -19,6 +20,13 @@ export function getSourceCodeFromLocs(
     const endLine = end.line;
 
     if (startLine === endLine) {
+        // Special case for CR where line always return 0 and column is the actual length
+        if (isSourceCodeUsingCR(context)) {
+            const codeWithLF = context.sourceCode.lines.join('\r');
+            const newLinesInTagCode = codeWithLF.substring(0, end.column).split('\r').length;
+            return codeWithLF.substring(start.column, end.column + newLinesInTagCode);
+        }
+
         return lines[startLine].substring(start.column, end.column);
     }
 

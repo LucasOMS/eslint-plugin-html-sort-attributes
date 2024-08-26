@@ -24,11 +24,9 @@ testWithAngularTemplateParser.run('html-attributes-order/order with CRLF', rule,
     invalid: prepareTestsWithCRLF(invalid),
 });
 
-// TODO Support CR
-// TODO Try to support mixed CR and LF
-xdescribe('cr new line char', () => {
-    testWithAngularTemplateParser.run('html-attributes-order/order with CR', rule, {
-        valid: prepareTestsWithCR(valid),
-        invalid: prepareTestsWithCR(invalid),
-    });
+testWithAngularTemplateParser.run('html-attributes-order/order with CR', rule, {
+    valid: prepareTestsWithCR(valid),
+    invalid: prepareTestsWithCR(invalid),
 });
+
+// TODO Try to support mixed CR and LF

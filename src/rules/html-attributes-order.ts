@@ -35,15 +35,13 @@ const rule: Rule.RuleModule = {
         // Check which parser is being used
         const parser = context.parserPath ?? '';
 
-        // Exemple de vérification du parser utilisé
-        if (parser.includes('@angular-eslint')) {
-            // Logique spécifique au parser Angular
+        if (parser.includes('@angular-eslint')) {       // @angular-eslint/template-parser
             return htmlAttributesOrderRuleForAngularTemplateParser(context);
-        } else if (parser.includes('@html-eslint')) {
+        } else if (parser.includes('@html-eslint')) {   // @html-eslint/parser
             // Logique spécifique au parser HTML
             return htmlAttributesOrderRuleForHtmlParser(context);
         } else {
-            // Pour d'autres parsers, vous pourriez lever une exception ou fournir un fallback
+            // If the parser is not supported, return an empty object to avoid any errors, no rule will be applied
             return {};
         }
     },

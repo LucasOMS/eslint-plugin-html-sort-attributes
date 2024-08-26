@@ -114,6 +114,7 @@ export function htmlAttributesOrderRuleForAngularTemplateParser(context: RuleCon
 
             const offsetInFile = getCharCountToLoc(context, tagStartZeroBased);
 
+
             const rangeToReplace: [number, number] = [
                 offsetInFile
                 + attributesKeyValue[0].range[0],
@@ -148,6 +149,7 @@ export function htmlAttributesOrderRuleForAngularTemplateParser(context: RuleCon
                         loc: sourceLocationFromLocation(
                             tagStartZeroBased,
                             attribute.loc,
+                            context,
                         ),
                     });
                     return;
@@ -171,6 +173,7 @@ export function htmlAttributesOrderRuleForAngularTemplateParser(context: RuleCon
                             loc: sourceLocationFromLocation(
                                 tagStartZeroBased,
                                 attribute.loc,
+                                context,
                             ),
                         });
                         return;
