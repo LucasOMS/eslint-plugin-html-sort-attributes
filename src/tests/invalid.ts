@@ -255,4 +255,35 @@ export const invalid = [
             attributeInError: '[columnTranslationKeys]',
             attributeInErrorMatchedRegex: '^\\[.*\\]$',
         }),
+
+    // Test source location error when line is indented
+    createInvalidTestCase(
+        advancedSortOptionsForAngularTemplateStyle,
+        `    <app-icon-button icon="no-speaker" (action)="ungroup()" state="active"/>`,
+        `    <app-icon-button (action)="ungroup()" icon="no-speaker" state="active"/>`,
+        {
+            type: 'order',
+            attributeInError: '(action)',
+            attributeInErrorMatchedRegex: '^\\(.*\\)$',
+            previousAttributeMatchedRegex: '^(?!class|style|\\[class|\\[style|\\[ngClass|\\[ngStyle).*$',
+        },
+    ),
+    // Test source location error after some new lines
+    createInvalidTestCase(
+        advancedSortOptionsForAngularTemplateStyle,
+        `<div>
+    
+    <app-icon-button icon="no-speaker" (action)="ungroup()" state="active"/>
+</div>`,
+        `<div>
+    
+    <app-icon-button (action)="ungroup()" icon="no-speaker" state="active"/>
+</div>`,
+        {
+            type: 'order',
+            attributeInError: '(action)',
+            attributeInErrorMatchedRegex: '^\\(.*\\)$',
+            previousAttributeMatchedRegex: '^(?!class|style|\\[class|\\[style|\\[ngClass|\\[ngStyle).*$',
+        },
+    ),
 ];

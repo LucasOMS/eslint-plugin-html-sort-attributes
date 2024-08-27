@@ -14,11 +14,6 @@ testWithAngularTemplateParser.run('html-attributes-order/order with LF', rule, {
     invalid,
 });
 
-testWithAngularTemplateParser.run('html-attributes-order/order with LF', rule, {
-    valid,
-    invalid,
-});
-
 testWithAngularTemplateParser.run('html-attributes-order/order with CRLF', rule, {
     valid: prepareTestsWithCRLF(valid),
     invalid: prepareTestsWithCRLF(invalid),

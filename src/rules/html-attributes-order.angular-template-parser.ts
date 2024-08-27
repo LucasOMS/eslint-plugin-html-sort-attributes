@@ -1,6 +1,6 @@
 import { Rule } from 'eslint';
 import { isTagIgnored } from '../utils/is-tag-ignored';
-import { sourceLocationFromLocation, unifyLocation } from '../utils/location.utils';
+import { incrLine, sourceLocationFromLocation, unifyLocation } from '../utils/location.utils';
 import * as htmlParser from '@html-eslint/parser';
 import { getSourceCodeFromLocs } from '../utils/get-source-code-from-locs';
 import { getRegexOrder } from '../utils/get-regex-order';
@@ -42,7 +42,7 @@ function getRearrangeAttributesFixer(
             .map(attribute => {
                 const metadata = attributesWithValue.get(attribute)!;
                 if (metadata.value) {
-                    return `${ metadata.name }="${ metadata.value }"`;
+                    return `${metadata.name}="${metadata.value}"`;
                 }
                 return metadata.name;
             })
@@ -114,7 +114,6 @@ export function htmlAttributesOrderRuleForAngularTemplateParser(context: RuleCon
 
             const offsetInFile = getCharCountToLoc(context, tagStartZeroBased);
 
-
             const rangeToReplace: [number, number] = [
                 offsetInFile
                 + attributesKeyValue[0].range[0],
@@ -145,9 +144,8 @@ export function htmlAttributesOrderRuleForAngularTemplateParser(context: RuleCon
                             rangeToReplace,
                             options,
                         ),
-                        // FIXME Seems to give wrong position when using CRLF files
                         loc: sourceLocationFromLocation(
-                            tagStartZeroBased,
+                            incrLine(tagStartZeroBased),
                             attribute.loc,
                             context,
                         ),
@@ -169,9 +167,8 @@ export function htmlAttributesOrderRuleForAngularTemplateParser(context: RuleCon
                                 rangeToReplace,
                                 options,
                             ),
-                            // FIXME Seems to give wrong position when using CRLF files
                             loc: sourceLocationFromLocation(
-                                tagStartZeroBased,
+                                incrLine(tagStartZeroBased),
                                 attribute.loc,
                                 context,
                             ),
