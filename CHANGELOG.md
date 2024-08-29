@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/compare/v1.0.0...v1.0.1) (2024-08-29)
+
+
+### Bug Fixes
+
+* add angular-eslint 17 support ([c341d0b](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/commit/c341d0b7b5ef3ffd246c1033620881e59371d162))
+
 # 1.0.0 (2024-08-29)
 
 
