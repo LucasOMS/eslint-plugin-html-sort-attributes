@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/compare/v1.0.1...v1.0.2) (2024-08-29)
+
+
+### Bug Fixes
+
+* fixer now indent correctly when multiline and first attribute on tag open line ([e6550c8](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/commit/e6550c859c330eb9c45c85b8394f88239ff916ce))
+
 ## [1.0.1](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/compare/v1.0.0...v1.0.1) (2024-08-29)
 
 
