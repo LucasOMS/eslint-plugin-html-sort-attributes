@@ -116,3 +116,7 @@ Correct code
 
 <div id="main" data-role="page" class="container"></div>
 ```
+
+## Contributing
+
+This is my first library, and I'm still learning how to make it better. If you have any suggestions, please let me know.
