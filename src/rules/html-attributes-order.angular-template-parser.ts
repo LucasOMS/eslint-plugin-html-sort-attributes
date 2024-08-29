@@ -9,6 +9,8 @@ import { getOptions } from '../utils/get-options';
 import { alphabeticalErrorMessage, regexOrderErrorMessage } from '../utils/error-messages';
 import { getSourceCodeNewLineChar } from '../utils/get-source-code-new-line-char';
 import { getCharCountToLoc } from '../utils/get-char-count-to-loc';
+import { isSourceCodeUsingCR } from '../utils/is-source-code-using-cr';
+import { getRealLineFromColumnWithCR } from '../utils/get-real-line-from-column-with-cr';
 import RuleContext = Rule.RuleContext;
 
 type AttributeMetadata = {
@@ -20,7 +22,8 @@ function getRearrangeAttributesFixer(
     context: Rule.RuleContext,
     attributesWithValue: Map<any, AttributeMetadata>,
     rangeToReplace: [number, number],
-    options: OrderRuleOptions): (fixer: Rule.RuleFixer) => Rule.Fix {
+    options: OrderRuleOptions,
+    wholeTagIndentation: number): (fixer: Rule.RuleFixer) => Rule.Fix {
     return (fixer: Rule.RuleFixer): Rule.Fix => {
         const attributes = Array.from(attributesWithValue.keys());
 
@@ -56,9 +59,29 @@ function getRearrangeAttributesFixer(
                     return attributeCode;
                 }
 
-                const mostLeftAttributeOffset = attributes.reduce((min, curr) => min < curr.loc.start.column ? min : curr.loc.start.column, Number.MAX_SAFE_INTEGER);
+                let mostLeftAttributeOffset = attributes.reduce((min, curr) => min < curr.loc.start.column ? min : curr.loc.start.column, Number.MAX_SAFE_INTEGER);
 
-                return ' '.repeat(mostLeftAttributeOffset) + attributeCode;
+                if (isSourceCodeUsingCR(context)) {
+                    const attributesCode = context.sourceCode.text.slice(rangeToReplace[0], rangeToReplace[1]);
+                    const attributesLines = attributesCode.split('\r');
+                    const indentationSearch = attributesLines
+                        .slice(1)
+                        .map(attributeLine => {
+                            const match = attributeLine.match(/^\s+/);
+                            return match ? match[0].length : Number.MAX_SAFE_INTEGER;
+                        });
+
+                    const indentationCount = Math.min(...indentationSearch);
+
+                    return ' '.repeat(indentationCount) + attributeCode;
+                }
+
+                // If first attribute is on the same line as tag open, columns don't include whole tag indentation
+                // so we need to add it manually
+                const firstAttributeIsOnTagOpenLine = attributes[0].loc.start.line === 1;
+                const indentOffset = firstAttributeIsOnTagOpenLine ? wholeTagIndentation : 0;
+
+                return ' '.repeat(indentOffset + mostLeftAttributeOffset) + attributeCode;
             })
             .join(attributesAreOnMultipleLines ? getSourceCodeNewLineChar(context) : ' ');
 
@@ -84,6 +107,14 @@ export function htmlAttributesOrderRuleForAngularTemplateParser(context: RuleCon
             const tagStartZeroBased = unifyLocation(elementOrTemplate.sourceSpan.start);
             const tagEndZeroBased = unifyLocation(elementOrTemplate.sourceSpan.end);
             const tagCode = getSourceCodeFromLocs(context, tagStartZeroBased, tagEndZeroBased);
+
+            let wholeTagIndentation = tagStartZeroBased.column;
+            if (isSourceCodeUsingCR(context)) {
+                const realLine = getRealLineFromColumnWithCR(context, tagStartZeroBased.column);
+                const originalFirstLineOfTag = context.sourceCode.lines[realLine];
+                const indentationMatch = originalFirstLineOfTag.match(/^\s+/);
+                wholeTagIndentation = indentationMatch ? indentationMatch[0].length : 0;
+            }
 
             const htmlParsed = htmlParser.parseForESLint(tagCode);
             const directChildrenTokens = htmlParsed.ast.tokens;
@@ -143,6 +174,7 @@ export function htmlAttributesOrderRuleForAngularTemplateParser(context: RuleCon
                             metadataByAttribute,
                             rangeToReplace,
                             options,
+                            wholeTagIndentation,
                         ),
                         loc: sourceLocationFromLocation(
                             incrLine(tagStartZeroBased),
@@ -166,6 +198,7 @@ export function htmlAttributesOrderRuleForAngularTemplateParser(context: RuleCon
                                 metadataByAttribute,
                                 rangeToReplace,
                                 options,
+                                wholeTagIndentation,
                             ),
                             loc: sourceLocationFromLocation(
                                 incrLine(tagStartZeroBased),

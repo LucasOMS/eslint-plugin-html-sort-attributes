@@ -286,4 +286,28 @@ export const invalid = [
             previousAttributeMatchedRegex: '^(?!class|style|\\[class|\\[style|\\[ngClass|\\[ngStyle).*$',
         },
     ),
+
+    // Test fix with specific indentation breaking
+    createInvalidTestCase(
+        advancedSortOptionsForAngularTemplateStyle,
+        `<div>
+    <button class="p-2 text-white hover:bg-primary-950 dark:hover:bg-dark-700"
+            routerLink="/rooms"
+            type="button">
+        Pièces
+    </button>
+</div>`,
+        `<div>
+    <button routerLink="/rooms"
+            type="button"
+            class="p-2 text-white hover:bg-primary-950 dark:hover:bg-dark-700">
+        Pièces
+    </button>
+</div>`,
+        {
+            type: 'order',
+            attributeInError: 'routerLink',
+            attributeInErrorMatchedRegex: '^(?!class|style|\\[class|\\[style|\\[ngClass|\\[ngStyle).*$',
+            previousAttributeMatchedRegex: '^class$',
+        }),
 ];
