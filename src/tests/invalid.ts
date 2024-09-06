@@ -35,6 +35,17 @@ export const invalid = [
             // No regex matched because none configured
             attributeInErrorMatchedRegex: undefined,
         }),
+    // Test with empty value (not undefined)
+    createInvalidTestCase(
+        { alphabetical: true },
+        `<img src="img.png" alt="" />`,
+        `<img alt="" src="img.png" />`,
+        {
+            type: 'alphabetical',
+            attributeInError: 'alt',
+            // No regex matched because none configured
+            attributeInErrorMatchedRegex: undefined,
+        }),
     createInvalidTestCase(
         { regexOrder: ['^first'] },
         `<h1 second="second" first-test="first">Test</h1>`,

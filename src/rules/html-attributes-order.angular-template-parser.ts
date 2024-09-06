@@ -44,7 +44,7 @@ function getRearrangeAttributesFixer(
         const code = sortedAttributes
             .map(attribute => {
                 const metadata = attributesWithValue.get(attribute)!;
-                if (metadata.value) {
+                if (metadata.value !== null && metadata.value !== undefined) {
                     return `${metadata.name}="${metadata.value}"`;
                 }
                 return metadata.name;
