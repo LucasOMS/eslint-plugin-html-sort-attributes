@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/compare/v1.0.2...v1.0.3) (2024-09-06)
+
+
+### Bug Fixes
+
+* handle attribute with falsy value but defined ([92fbee3](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/commit/92fbee36bbfe553a2eab49eabab606469f7f89b3))
+
 ## [1.0.2](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/compare/v1.0.1...v1.0.2) (2024-08-29)
 
 
