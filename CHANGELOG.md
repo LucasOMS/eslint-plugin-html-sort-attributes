@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/compare/v1.0.3...v1.1.0) (2024-10-02)
+
+
+### Features
+
+* **named regex:** name regex for error messages easier to read ([3ec2c5a](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/commit/3ec2c5ae3d9ec4d9d3026e565435ef8a31341ede))
+
 ## [1.0.3](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/compare/v1.0.2...v1.0.3) (2024-09-06)
 
 
