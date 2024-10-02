@@ -1,10 +1,12 @@
 import { RuleTester } from 'eslint';
+import { alphabeticalErrorMessage, regexOrderErrorMessage } from '../utils/error-messages';
+import { OrderRuleRegex } from '../types/order-rule-options';
+import { regexOrNamedRegexToOrderRuleRegex } from '../utils/get-options';
 import InvalidTestCase = RuleTester.InvalidTestCase;
 import ValidTestCase = RuleTester.ValidTestCase;
-import { alphabeticalErrorMessage, regexOrderErrorMessage } from '../utils/error-messages';
 
 export interface TestCaseOptions {
-    regexOrder?: string[],
+    regexOrder?: (string | OrderRuleRegex)[],
     alphabetical?: boolean,
 }
 
@@ -43,19 +45,19 @@ export function createInvalidTestCase(
     let message: string;
     if (error.type === 'order') {
         message = regexOrderErrorMessage(
-            error.previousAttributeMatchedRegex,
-            error.attributeInErrorMatchedRegex,
+            getOrderRuleRegex(error.previousAttributeMatchedRegex),
+            getOrderRuleRegex(error.attributeInErrorMatchedRegex),
         );
     } else {
         message = alphabeticalErrorMessage(
             order.length > 0,
-            error.attributeInErrorMatchedRegex,
+            getOrderRuleRegex(error.attributeInErrorMatchedRegex),
         );
     }
     const codeLines = code.split('\n');
     const attributeInErrorLine = codeLines.findIndex((line) => line.includes(error.attributeInError)) + 1;
     if (attributeInErrorLine === 0) {
-        throw new Error(`Attribute ${error.attributeInError} not found in code`);
+        throw new Error(`Attribute ${ error.attributeInError } not found in code`);
     }
     const attributeInErrorColumn = codeLines[attributeInErrorLine - 1].indexOf(error.attributeInError) + 1;
 
@@ -76,4 +78,19 @@ export function createInvalidTestCase(
             },
         ],
     };
+
+    function getOrderRuleRegex(regex: string | undefined): OrderRuleRegex | undefined {
+        if (!regex) {
+            return undefined;
+        }
+        return {
+            name: options?.regexOrder?.map(regexOrNamedRegexToOrderRuleRegex)?.find(o => {
+                if (typeof o === 'string') {
+                    return o === regex;
+                }
+                return o.regex === regex;
+            })?.name ?? regex,
+            regex: regex,
+        };
+    }
 }

@@ -1,4 +1,6 @@
-export function getRegexOrder(attributeName: string, order: string[]): number {
-    const res = order.findIndex((regex) => new RegExp(regex).test(attributeName));
+import { OrderRuleRegex } from '../types/order-rule-options';
+
+export function getRegexOrder(attributeName: string, order: OrderRuleRegex[]): number {
+    const res = order.findIndex((orderRuleRegex) => new RegExp(orderRuleRegex.regex).test(attributeName));
     return res === -1 ? order.length : res;
 }

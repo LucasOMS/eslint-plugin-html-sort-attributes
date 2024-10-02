@@ -56,6 +56,19 @@ export const invalid = [
             attributeInErrorMatchedRegex: '^first',
             previousAttributeMatchedRegex: undefined, // Matched none
         }),
+
+    // With named regex
+    createInvalidTestCase(
+        { regexOrder: [{regex: '^first', name: 'First class'}] },
+        `<h1 second="second" first-test="first">Test</h1>`,
+        `<h1 first-test="first" second="second">Test</h1>`,
+        {
+            type: 'order',
+            attributeInError: 'first-test',
+            attributeInErrorMatchedRegex: '^first',
+            previousAttributeMatchedRegex: undefined, // Matched none
+        }),
+
     createInvalidTestCase(
         { regexOrder: ['^z', '^first'] },
         `<h1 first-test="first" second="second" z-attr="first">Test</h1>`,

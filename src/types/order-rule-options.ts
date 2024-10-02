@@ -1,4 +1,9 @@
 export type OrderRuleOptions = {
     alphabetical: boolean;
-    order: string[];
+    order: OrderRuleRegex[];
+}
+
+export interface OrderRuleRegex {
+    name: string;
+    regex: string;
 }
