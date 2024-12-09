@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/compare/v1.1.0...v1.2.0) (2024-12-09)
+
+
+### Features
+
+* add support for angular 19 template parser ([58e907c](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/commit/58e907c0638b28dbe25215663da1a4967295290b))
+
 # [1.1.0](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/compare/v1.0.3...v1.1.0) (2024-10-02)
 
 
