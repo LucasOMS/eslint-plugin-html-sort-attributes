@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/compare/v1.2.0...v1.3.0) (2025-03-07)
+
+
+### Features
+
+* change way to get parser to support ESLint 9 configs ([ddc59f2](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/commit/ddc59f230b801f6cacf111750bb9b32090c6c3eb))
+
 # [1.2.0](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/compare/v1.1.0...v1.2.0) (2024-12-09)
 
 
