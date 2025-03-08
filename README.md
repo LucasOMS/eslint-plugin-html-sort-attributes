@@ -117,6 +117,98 @@ Correct code
 <div id="main" data-role="page" class="container"></div>
 ```
 
+## RegexFactory, create regex simply that are easy to read
+
+The library exposes a RegexFactory that can be used to create regex patterns easily to be used in the eslint.config.js
+file.
+
+Everything used in the factory escapes special characters, if you have complex pattern to create, consider using a
+pattern with comments instead of using the factory.
+
+Here are some examples of how to use it:
+
+### Get the RegexFactory constructor
+
+#### Typescript import
+
+```typescript
+import htmlSortAttributesPlugin from 'eslint-plugin-html-sort-attributes';
+
+const { RegexFactory } = htmlSortAttributesPlugin;
+```
+
+#### Javascript
+
+```javascript
+const htmlSortAttributesPlugin = require('eslint-plugin-html-sort-attributes');
+
+const {RegexFactory} = htmlSortAttributesPlugin;
+```
+
+### Attribute is
+
+```javascript
+// Will generate /^id$/
+new RegexFactory().equals('id').build();
+```
+
+### Attribute starts with
+
+```javascript
+// Will generate /^data-.*/
+new RegexFactory().startsWith('data-').build();
+```
+
+### Attribute doesn't start with
+
+```javascript
+// Will generate /^(?!data-\b|tracker-\b).*/ and negate it
+new RegexFactory().doesntStartWith(['data-', 'tracker-']).build();
+```
+
+### Attribute contains
+
+```javascript
+// Will generate /.*data-.*/
+new RegexFactory().contains('data-').build();
+```
+
+### Compose multiple regex
+
+This example show how to create a regex that match an attribute starting with '[' but not followed by a list of specific
+patterns such as style or class.
+
+_This can be used to select an angular input that doesn't match another inner pattern._
+
+```javascript
+// Will generate /^\[(?!style\b|class\b).*\]$/
+new RegexFactory()
+        .startsWith('[')
+        .hasRegexContent(
+                new RegexFactory()
+                        .doesntStartWith([
+                          'style',
+                          'class'
+                        ])
+        )
+        .endsWith(']')
+        .build();
+```
+
+### Force start and end boundaries
+
+You can force the regex to start with `^` and end with `$` by using the `forceStartAndEnd` option in `build()` function.
+
+```javascript
+const regex = new RegexFactory().startsWith('start').contains('content');
+
+// Will generate /^start.*content.*/
+regex.build();
+
+// Will generate /^start.*content.*$/
+regex.build({forceStartAndEnd: true});
+```
+
 ## Contributing
 
 This is my first library, and I'm still learning how to make it better. If you have any suggestions, please let me know.
