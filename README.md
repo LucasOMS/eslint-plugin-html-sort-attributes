@@ -11,9 +11,43 @@ An ESLint rule to enforce a consistent order of attributes in HTML elements base
 This plugins needs @angular-eslint/template-parser or @html-eslint/parser to work.
 By default, none is configured, you might need to define it manually in your eslint configuration.
 
+### ESLint >= 9
+
+```javascript
+// Import plugin
+import htmlSortAttributesPlugin from 'eslint-plugin-html-sort-attributes';
+// Choose parser that is compatible with the plugin and your project
+import angularTemplateParser from '@angular-eslint/template-parser';
+// Or 
+import eslintHtmlParser from '@html-eslint/parser';
+
+export default [{
+  // ...
+  files: ['**/*.html'],
+  languageOptions: {
+    parser: eslintHtmlParser,
+  },
+  plugins: {
+    'html-sort-attributes': htmlSortAttributesPlugin,
+  },
+  // ...
+}];
+```
+
+### ESLint < 9
+
+#### HTML Eslint parser
 ```json
 {
   "parser": "@html-eslint/parser"
+}
+```
+
+#### Angular template parser
+
+```json
+{
+  "parser": "@angular-eslint/template-parser"
 }
 ```
 
