@@ -37,6 +37,7 @@ export default [{
 ### ESLint < 9
 
 #### HTML Eslint parser
+
 ```json
 {
   "parser": "@html-eslint/parser"
@@ -151,9 +152,9 @@ Correct code
 <div id="main" data-role="page" class="container"></div>
 ```
 
-## RegexFactory, create regex simply that are easy to read
+## RegexBuilder, create regex simply that are easy to read
 
-The library exposes a RegexFactory that can be used to create regex patterns easily to be used in the eslint.config.js
+The library exposes a RegexBuilder that can be used to create regex patterns easily to be used in the eslint.config.js
 file.
 
 Everything used in the factory escapes special characters, if you have complex pattern to create, consider using a
@@ -161,14 +162,14 @@ pattern with comments instead of using the factory.
 
 Here are some examples of how to use it:
 
-### Get the RegexFactory constructor
-
+### Get the RegexBuilder constructor
+ 
 #### Typescript import
 
 ```typescript
 import htmlSortAttributesPlugin from 'eslint-plugin-html-sort-attributes';
 
-const { RegexFactory } = htmlSortAttributesPlugin;
+const { RegexBuilder } = htmlSortAttributesPlugin;
 ```
 
 #### Javascript
@@ -176,35 +177,35 @@ const { RegexFactory } = htmlSortAttributesPlugin;
 ```javascript
 const htmlSortAttributesPlugin = require('eslint-plugin-html-sort-attributes');
 
-const {RegexFactory} = htmlSortAttributesPlugin;
+const {RegexBuilder} = htmlSortAttributesPlugin;
 ```
 
 ### Attribute is
 
 ```javascript
 // Will generate /^id$/
-new RegexFactory().equals('id').build();
+new RegexBuilder().equals('id').build();
 ```
 
 ### Attribute starts with
 
 ```javascript
 // Will generate /^data-.*/
-new RegexFactory().startsWith('data-').build();
+new RegexBuilder().startsWith('data-').build();
 ```
 
 ### Attribute doesn't start with
 
 ```javascript
 // Will generate /^(?!data-\b|tracker-\b).*/ and negate it
-new RegexFactory().doesntStartWith(['data-', 'tracker-']).build();
+new RegexBuilder().doesntStartWith(['data-', 'tracker-']).build();
 ```
 
 ### Attribute contains
 
 ```javascript
 // Will generate /.*data-.*/
-new RegexFactory().contains('data-').build();
+new RegexBuilder().contains('data-').build();
 ```
 
 ### Compose multiple regex
@@ -216,10 +217,10 @@ _This can be used to select an angular input that doesn't match another inner pa
 
 ```javascript
 // Will generate /^\[(?!style\b|class\b).*\]$/
-new RegexFactory()
+new RegexBuilder()
         .startsWith('[')
         .hasRegexContent(
-                new RegexFactory()
+                new RegexBuilder()
                         .doesntStartWith([
                           'style',
                           'class'
@@ -234,7 +235,7 @@ new RegexFactory()
 You can force the regex to start with `^` and end with `$` by using the `forceStartAndEnd` option in `build()` function.
 
 ```javascript
-const regex = new RegexFactory().startsWith('start').contains('content');
+const regex = new RegexBuilder().startsWith('start').contains('content');
 
 // Will generate /^start.*content.*/
 regex.build();

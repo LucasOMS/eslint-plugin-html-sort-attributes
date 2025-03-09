@@ -1,6 +1,6 @@
 import htmlAttributesOrder from './rules/html-attributes-order';
 import recommended from './configs/recommended';
-import { RegexFactory } from './utils/regex-factory';
+import { RegexBuilder } from './utils/regex-builder';
 
 // Export our ESLint rules
 export = {
@@ -10,5 +10,5 @@ export = {
     configs: {
         recommended: recommended,
     },
-    RegexFactory,
+    RegexBuilder,
 };

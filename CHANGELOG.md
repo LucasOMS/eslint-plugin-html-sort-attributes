@@ -10,7 +10,8 @@
 
 ### Features
 
-* provide RegexFactory to help construct config regex when using js ([fb136b2](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/commit/fb136b232b6a0e5919fac7177055a8bdf2253a8c))
+* provide RegexBuilder to help construct config regex when using
+  js ([fb136b2](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/commit/fb136b232b6a0e5919fac7177055a8bdf2253a8c))
 
 # [1.3.0](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/compare/v1.2.0...v1.3.0) (2025-03-07)
 

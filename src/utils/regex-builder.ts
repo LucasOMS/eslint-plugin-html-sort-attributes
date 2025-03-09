@@ -1,4 +1,4 @@
-export class RegexFactory {
+export class RegexBuilder {
     private start?: string;
     private end?: string;
     private content?: string;
@@ -6,7 +6,7 @@ export class RegexFactory {
     // Error flags
     private isEqual = false;
 
-    public startsWith(text: string | string[]): RegexFactory {
+    public startsWith(text: string | string[]): RegexBuilder {
         this.throwErrorIfInEqualMode();
         if (this.start) {
             throw new Error('Cannot set start multiple times');
@@ -19,7 +19,7 @@ export class RegexFactory {
         return this;
     }
 
-    public doesntStartWith(text: string | string[], useWordBoundary = true): RegexFactory {
+    public doesntStartWith(text: string | string[], useWordBoundary = true): RegexBuilder {
         this.throwErrorIfInEqualMode();
         if (this.start) {
             throw new Error('Cannot set start multiple times');
@@ -32,7 +32,7 @@ export class RegexFactory {
         return this;
     }
 
-    public endsWith(text: string | string[]): RegexFactory {
+    public endsWith(text: string | string[]): RegexBuilder {
         this.throwErrorIfInEqualMode();
         if (this.end) {
             throw new Error('Cannot set end multiple times');
@@ -45,7 +45,7 @@ export class RegexFactory {
         return this;
     }
 
-    public doesntEndWith(text: string | string[], useWordBoundary = true): RegexFactory {
+    public doesntEndWith(text: string | string[], useWordBoundary = true): RegexBuilder {
         this.throwErrorIfInEqualMode();
         if (this.end) {
             throw new Error('Cannot set end multiple times');
@@ -58,7 +58,7 @@ export class RegexFactory {
         return this;
     }
 
-    public contains(text: string | string[]): RegexFactory {
+    public contains(text: string | string[]): RegexBuilder {
         this.throwErrorIfInEqualMode();
         if (this.content) {
             throw new Error('Cannot set content multiple times');
@@ -71,7 +71,7 @@ export class RegexFactory {
         return this;
     }
 
-    doesntContain(text: string | string[]): RegexFactory {
+    doesntContain(text: string | string[]): RegexBuilder {
         this.throwErrorIfInEqualMode();
         if (this.content) {
             throw new Error('Cannot set content multiple times');
@@ -84,7 +84,7 @@ export class RegexFactory {
         return this;
     }
 
-    public equals(text: string | string[]): RegexFactory {
+    public equals(text: string | string[]): RegexBuilder {
         if (this.content) {
             throw new Error('Cannot set content multiple times');
         }
@@ -98,7 +98,7 @@ export class RegexFactory {
         return this;
     }
 
-    public hasRegexContent(regexContent: RegexFactory): RegexFactory {
+    public hasRegexContent(regexContent: RegexBuilder): RegexBuilder {
         this.throwErrorIfInEqualMode();
         if (this.content) {
             throw new Error('Cannot set content multiple times');
@@ -108,11 +108,11 @@ export class RegexFactory {
     }
 
     // Allows to chain multiple regex because is might be easier to build two regex separately
-    public or(regexFactory: RegexFactory): RegexFactory {
+    public or(RegexBuilder: RegexBuilder): RegexBuilder {
         if (!this.start && !this.content && !this.end) {
             throw new Error('Cannot use or without any content');
         }
-        this.content = `(${this.build()}|${regexFactory.build()})`;
+        this.content = `(${this.build()}|${RegexBuilder.build()})`;
         // After building the or, we reset the other values
         this.start = undefined;
         this.end = undefined;
