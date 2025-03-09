@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/compare/v1.4.1...v1.5.0) (2025-03-09)
+
+
+### Features
+
+* rename RegexFactory to RegexBuilder ([5f85d3a](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/commit/5f85d3a232c9e4cfe269da36509967d97f05445b))
+
 ## [1.4.1](https://github.com/LucasOMS/eslint-plugin-html-sort-attributes/compare/v1.4.0...v1.4.1) (2025-03-09)
 
 
