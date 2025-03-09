@@ -51,10 +51,10 @@ export class RegexFactory {
             throw new Error('Cannot set end multiple times');
         }
         if (Array.isArray(text)) {
-            this.end = `(?!${text.map(escapeRegexCharacters).map(addWordBoundary(useWordBoundary, 'start')).join('|')})$`;
+            this.end = `(?<!${text.map(escapeRegexCharacters).map(addWordBoundary(useWordBoundary, 'start')).join('|')})$`;
             return this;
         }
-        this.end = `(?!${escapeRegexCharacters(text)})$`;
+        this.end = `(?<!${escapeRegexCharacters(text)})$`;
         return this;
     }
 
@@ -84,11 +84,16 @@ export class RegexFactory {
         return this;
     }
 
-    public equals(text: string): RegexFactory {
+    public equals(text: string | string[]): RegexFactory {
         if (this.content) {
             throw new Error('Cannot set content multiple times');
         }
         this.isEqual = true;
+        if (Array.isArray(text)) {
+            this.content = `^(${text.map(escapeRegexCharacters).join('|')})$`;
+            return this;
+        }
+
         this.content = `^${escapeRegexCharacters(text)}$`;
         return this;
     }
@@ -138,7 +143,7 @@ export class RegexFactory {
             if (!this.end) {
                 this.end = '$';
             }
-            this.content = removeStart(removeEnd(this.content));
+            this.content = removeStart(removeEnd(this.content ?? ''));
         }
 
         return [this.start, this.content, this.end].filter(Boolean).join('');

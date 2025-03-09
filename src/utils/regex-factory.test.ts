@@ -1,5 +1,3 @@
-// RegexFactory.test.js
-
 import { RegexFactory } from './regex-factory';
 
 describe('RegexFactory Tests', () => {
@@ -79,6 +77,33 @@ describe('RegexFactory Tests', () => {
             expect(result2).toBe('^(start|start2).*a.*(end|end2)$');
         });
     });
+    describe('Doesnt Contains', () => {
+        test('Without start nor end', () => {
+            const result = new RegexFactory().doesntContain('a').build();
+            expect(result).toBe('^(?!.*a).*$');
+        });
+        test('With start', () => {
+            const result = new RegexFactory().doesntContain('a').startsWith('start').build();
+            expect(result).toBe('^start(?!.*a).*$');
+
+            const result2 = new RegexFactory().doesntContain('a').startsWith(['start', 'start2']).build();
+            expect(result2).toBe('^(start|start2)(?!.*a).*$');
+        });
+        test('With end', () => {
+            const result = new RegexFactory().doesntContain('a').endsWith('end').build();
+            expect(result).toBe('^(?!.*a).*end$');
+
+            const result2 = new RegexFactory().doesntContain('a').endsWith(['end', 'end2']).build();
+            expect(result2).toBe('^(?!.*a).*(end|end2)$');
+        });
+        test('With start and end', () => {
+            const result = new RegexFactory().doesntContain('a').startsWith('start').endsWith('end').build();
+            expect(result).toBe('^start(?!.*a).*end$');
+
+            const result2 = new RegexFactory().doesntContain('a').startsWith(['start', 'start2']).endsWith(['end', 'end2']).build();
+            expect(result2).toBe('^(start|start2)(?!.*a).*(end|end2)$');
+        });
+    });
 
     test('Doesnt start with', () => {
         const result = new RegexFactory().doesntStartWith('notStart').build();
@@ -93,13 +118,13 @@ describe('RegexFactory Tests', () => {
 
     test('Doesnt end with', () => {
         const result = new RegexFactory().doesntEndWith('notEnd').build();
-        expect(result).toBe('.*(?!notEnd)$');
+        expect(result).toBe('.*(?<!notEnd)$');
 
         const result2 = new RegexFactory().doesntEndWith(['notEnd', 'notEnd2']).build();
-        expect(result2).toBe('.*(?!\\bnotEnd|\\bnotEnd2)$');
+        expect(result2).toBe('.*(?<!\\bnotEnd|\\bnotEnd2)$');
 
         const result3 = new RegexFactory().doesntEndWith(['notEnd', 'notEnd2'], false).build();
-        expect(result3).toBe('.*(?!notEnd|notEnd2)$');
+        expect(result3).toBe('.*(?<!notEnd|notEnd2)$');
     });
 
     test('Has regex content', () => {
